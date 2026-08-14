@@ -10,6 +10,7 @@ import { useChat } from './hooks/useChat';
 
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
+import { MobileTabBar } from './components/MobileTabBar';
 
 // 路由懒加载：各页面按需加载，减小首屏体积（命名导出转 default）
 const SettingsPage = lazy(() => import('./components/SettingsPage').then(m => ({ default: m.SettingsPage })));
@@ -205,7 +206,7 @@ function AppContent() {
       />
 
       <main
-        className="flex-1 flex flex-col min-w-0"
+        className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0"
         style={{ backgroundColor: 'var(--td-bg-color-page)' }}
       >
         <Header
@@ -214,6 +215,7 @@ function AppContent() {
           theme={theme}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           onToggleTheme={toggleTheme}
+          onOpenSettings={() => handleNavigate('/settings')}
         />
 
         <Suspense
@@ -226,6 +228,8 @@ function AppContent() {
           {renderPage()}
         </Suspense>
       </main>
+
+      <MobileTabBar currentPath={pathname} onNavigate={handleNavigate} />
     </div>
   );
 }

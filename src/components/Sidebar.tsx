@@ -49,7 +49,7 @@ export function Sidebar({
 
   return (
     <aside
-      className="flex flex-col flex-shrink-0 transition-all duration-300 overflow-hidden"
+      className="hidden md:flex flex-col flex-shrink-0 transition-all duration-300 overflow-hidden"
       style={{
         width: sidebarOpen ? 260 : 0,
         backgroundColor: 'var(--td-bg-color-container)'
