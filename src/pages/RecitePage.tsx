@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Progress, MessagePlugin, Loading, Tag } from 'tdesign-react';
 import { SoundIcon } from 'tdesign-icons-react';
+import { useNavigate } from 'react-router-dom';
 import { speak } from '../utils/speech';
 import { recordRecite } from '../utils/daily';
 
@@ -19,6 +20,7 @@ interface ReciteItem {
 }
 
 export function RecitePage() {
+  const navigate = useNavigate();
   const [queue, setQueue] = useState<ReciteItem[]>([]);
   const [total, setTotal] = useState(0);
   const [done, setDone] = useState(0);
@@ -81,6 +83,25 @@ export function RecitePage() {
 
   // 队列背完
   if (!current) {
+    // 初始即为空：没有到期词也没有新词
+    if (total === 0 && done === 0) {
+      return (
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center max-w-sm w-full py-12 rounded-xl" style={{ backgroundColor: 'var(--td-bg-color-container)' }}>
+            <div className="text-4xl mb-3">📖</div>
+            <div className="text-lg font-medium" style={{ color: 'var(--td-text-color-primary)' }}>
+              今日没有待背的单词
+            </div>
+            <div className="text-sm mt-2" style={{ color: 'var(--td-text-color-secondary)' }}>
+              所有单词都已学过且未到复习时间，可去「单词库」学习新词，或稍后再来复习
+            </div>
+            <Button className="mt-6" theme="primary" onClick={() => navigate('/words')}>
+              去单词库学新词
+            </Button>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="text-center max-w-sm w-full py-12 rounded-xl" style={{ backgroundColor: 'var(--td-bg-color-container)' }}>

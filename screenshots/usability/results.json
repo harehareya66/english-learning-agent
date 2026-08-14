@@ -1,0 +1,173 @@
+[
+  {
+    "label": "学习中心",
+    "route": "/",
+    "bodyTextLen": 220,
+    "bodyText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n设置\n学习中心\n30\n词库单词\n30\n已学单词\n6\n今日待复习\n6\n错题\n开始背单词（今日 0/20 · 待复习 6 个）\n🔥 连续打卡 0 天\n掌握度概览\n已掌握 0 / 已学 30\n0%\n今日单词复习 0 个\n今日错题巩固 6 道\n开始学习\n背单词\n主动回忆式记忆\n单词库\n词根词源学新词\n复习\n艾宾浩斯巩固记忆\n测评\n检验掌握程度\n场景口语\n情景对话练习",
+    "buttons": [
+      "设置",
+      "开始背单词（今日 0/20 · 待复习 6 个）",
+      "学习",
+      "背单词",
+      "单词库",
+      "复习",
+      "测评",
+      "口语",
+      "AI"
+    ],
+    "consoleErrors": [],
+    "networkFailures": []
+  },
+  {
+    "label": "背单词",
+    "route": "/recite",
+    "bodyTextLen": 78,
+    "bodyText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n设置\n背单词\n🎉\n本次背了 0 个单词\n继续保持，明天记得回来复习\n再来一组",
+    "buttons": [
+      "设置",
+      "再来一组",
+      "学习",
+      "背单词",
+      "单词库",
+      "复习",
+      "测评",
+      "口语",
+      "AI"
+    ],
+    "consoleErrors": [],
+    "networkFailures": []
+  },
+  {
+    "label": "单词库",
+    "route": "/words",
+    "bodyTextLen": 1438,
+    "bodyText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n设置\n单词库\ntract\n拉 · 词族 3 词\nattract\n/əˈtrækt/\n已学 L1\nv. 吸引\n已加入\ncontract\n/ˈkɑːntrækt/\n已学 L0\nn. 合同 v. 收缩\n已加入\nextract\n/ɪkˈstrækt/\n已学 L0\nv. 提取，拔出\n已加入\naud\n听 · 词族 2 词\naudience\n/ˈɔːdiəns/\n已学 L0\nn. 观众，听众\n已加入\naudio\n/ˈɔːdioʊ/\n已学 L0\nn./adj. 音频(的)\n已加入\ngraph\n写 · 词族 2 词\nautograph\n/ˈɔːtəɡræf/\n已学 L1\nn. 亲笔签名\n已加入\nphotograph\n/ˈfoʊtəɡræf/\n已学 L1\nn. 照片\n已加入\nbio\n生命 · 词族 2 词\nbiography\n/baɪˈɑːɡrəfi/\n已学 L0\nn. 传记\n已加入\nbiology\n/baɪˈɑːlədʒi/\n已学 L1\nn. 生物学\n已加入\nstruct\n建造 · 词族 2 词\nconstruct\n/kənˈ",
+    "buttons": [
+      "设置",
+      "学习",
+      "背单词",
+      "单词库",
+      "复习",
+      "测评",
+      "口语",
+      "AI"
+    ],
+    "consoleErrors": [],
+    "networkFailures": []
+  },
+  {
+    "label": "复习",
+    "route": "/review",
+    "bodyTextLen": 405,
+    "bodyText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n设置\n复习\n\n根据艾宾浩斯遗忘曲线自动安排今日复习\n\n刷新\n今日待复习 6 项，先回忆再点开释义，如实自评：\n错题 · 词义 extract\nextract 的意思是？\n会了\n不会\n点击显示答案\n错题 · 词根 spect（看）\n\"inspect\" 中 spect 的意思是？\n会了\n不会\n点击显示答案\n错题 · 词根 dict（说）\npredict = pre(提前) + dict(?)\n会了\n不会\n点击显示答案\n错题 · 词根 tract\nattract（v. 吸引）的词根是？\n会了\n不会\n点击显示答案\n错题 · 后缀 -able（能…的）\n\"portable\" 的后缀 -able 表示？\n会了\n不会\n点击显示答案\n错题 · 词族 spect\n下列哪个词与 inspect 同词根（spect）？\n会了\n不会\n点击显示答案",
+    "buttons": [
+      "设置",
+      "刷新",
+      "会了",
+      "不会",
+      "会了",
+      "不会",
+      "会了",
+      "不会",
+      "会了",
+      "不会",
+      "会了",
+      "不会",
+      "会了",
+      "不会",
+      "学习",
+      "背单词",
+      "单词库",
+      "复习",
+      "测评",
+      "口语",
+      "AI"
+    ],
+    "consoleErrors": [],
+    "networkFailures": []
+  },
+  {
+    "label": "测评",
+    "route": "/assessment",
+    "bodyTextLen": 729,
+    "bodyText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n设置\n测评\n\n词根词源能力测评，答错的题会自动进入错题本\n\n重新开始\n1. The company ___ coffee beans from Brazil.\nA. imports\nB. exports\nC. transports\nD. inspects\n2. \"inspect\" 中 spect 的意思是？\nA. 搬运\nB. 看\nC. 说\nD. 听\n3. predict = pre(提前) + dict(?)\nA. 看\nB. 写\nC. 说\nD. 拉\n4. \"portable\" 的后缀 -able 表示？\nA. 人\nB. 能…的\nC. 反向\nD. 名词\n101. 下列哪个词与 contract 同词根（tract）？\nA. biology\nB. attract\nC. portable\nD. audio\n102. 下列哪个词与 extract 同词根（tract）？\nA. attract\nB. photograph\nC. dictionary\nD. produce\n103. inspect（v. 检查，视察）的词",
+    "buttons": [
+      "设置",
+      "重新开始",
+      "提交答案",
+      "学习",
+      "背单词",
+      "单词库",
+      "复习",
+      "测评",
+      "口语",
+      "AI"
+    ],
+    "consoleErrors": [],
+    "networkFailures": []
+  },
+  {
+    "label": "场景口语",
+    "route": "/oral",
+    "bodyTextLen": 159,
+    "bodyText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n设置\n场景口语\n\n选择一个场景，进行角色扮演口语练习\n\n浏览\n跟读\nAt the Airport 机场值机\n机场出行\nOrdering Food 餐厅点餐\n餐厅点餐\nBusiness Meeting 商务会议\n商务会议\n点击上方场景开始练习",
+    "buttons": [
+      "设置",
+      "学习",
+      "背单词",
+      "单词库",
+      "复习",
+      "测评",
+      "口语",
+      "AI"
+    ],
+    "consoleErrors": [],
+    "networkFailures": []
+  },
+  {
+    "label": "AI对话",
+    "route": "/chat",
+    "bodyTextLen": 245,
+    "bodyText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n对话历史\n新对话\nnihao\n用英语和我聊聊天气\n帮我讲讲 inspect 这个词\n设置\nAI 对话\n英语学习助手\n\nAI 英语学习对话 · 自由提问、语法纠错、个性化讲解\n\n帮我讲解一下 transport 这个词的词根词源\n用英语和我聊聊今天的天气\n写一段商务邮件的常用英语表达\n我该怎么用英语表达「请假」？\n\n想学新词？试试左侧「单词库」，词根词源本地秒查\n\n需要巩固记忆？去「复习」；检验水平？去「测评」",
+    "buttons": [
+      "新对话",
+      "设置",
+      "学习",
+      "背单词",
+      "单词库",
+      "复习",
+      "测评",
+      "口语",
+      "AI"
+    ],
+    "consoleErrors": [],
+    "networkFailures": []
+  },
+  {
+    "label": "设置",
+    "route": "/settings",
+    "bodyTextLen": 512,
+    "bodyText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n设置\n设置\n设置\n\n管理登录配置和英语学习 Agent\n\nAPI Key 配置\n\n填入你的 DeepSeek API Key，启用 AI 增强功能；未配置时自动使用本地模式（词根词源 / 复习 / 测评均可离线使用）\n\n刷新\n未配置（本地模式）\nDeepSeek API Key\nBase URL（可选，默认官方接口）\n保存\n测试连接\nAgent 配置\n\n创建和管理英语学习 Agent\n\n预设学习模式（内置）\n英语学习助手\n智能英语学习总控 - 自动识别学习意图，调度对应学习模块\n内置\n单词学习\n改良艾宾浩斯算法 + 场景词卡，科学抗遗忘记忆\n内置\n场景口语训练\nAI沉浸式对话练习 - 商务/考试/日常全场景覆盖\n内置\n错题专项复习\n智能错题本 + 薄弱知识点分析，精准查漏补缺\n内置\n英语能力测评\n多维度听说读写测评，生成能力雷达图与学习路径\n内置\n快速创建\nK12 同步辅导\n中小学英语同步教学，紧扣教材\n四六级/考研备考\n大学应试备考，精准提分\n商务英语实战\n职场商务场景英语训练\n雅思托福冲刺\n留学考试专项突",
+    "buttons": [
+      "设置",
+      "刷新",
+      "保存",
+      "测试连接",
+      "从头创建 Agent",
+      "学习",
+      "背单词",
+      "单词库",
+      "复习",
+      "测评",
+      "口语",
+      "AI"
+    ],
+    "consoleErrors": [],
+    "networkFailures": []
+  },
+  {
+    "label": "背单词-点显示释义",
+    "clickResult": "NOT_FOUND",
+    "afterText": "E\n英语学习助手\n学习中心\n背单词\n单词库\n复习\n测评\n场景口语\nAI 对话\n设置\n背单词\n🎉\n本次背了 0 个单词\n继续保持，明天记得回来复习\n再来一组"
+  }
+]

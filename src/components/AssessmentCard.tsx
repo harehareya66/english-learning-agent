@@ -94,7 +94,7 @@ export function AssessmentCard({ questions, sessionId }: AssessmentCardProps) {
 
   return (
     <div className="space-y-4">
-      {questions.map(q => (
+      {questions.map((q, i) => (
         <div
           key={q.id}
           className="px-4 py-3 rounded-lg"
@@ -107,7 +107,7 @@ export function AssessmentCard({ questions, sessionId }: AssessmentCardProps) {
             className="font-medium mb-2"
             style={{ color: 'var(--td-text-color-primary)' }}
           >
-            {q.id}. {q.question}
+            {i + 1}. {q.question}
           </div>
           <Radio.Group
             value={answers[q.id]}
