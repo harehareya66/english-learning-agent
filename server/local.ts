@@ -15,42 +15,18 @@ import {
   getAllWordMemory,
 } from './db.js';
 import { scheduleReview, ReviewResult, initialMemory } from './memory.js';
+import { classifyIntent as classifyIntentPure } from '../shared/intent.js';
+import type { Intent } from '../shared/intent.js';
+import { buildDynamicQuestions as buildDynamicQuestionsPure } from '../shared/assessment.js';
+import type { AssessmentQuestion, WordRef } from '../shared/assessment.js';
 
 // ============= 意图分类 =============
 
-export type Intent = 'lookup' | 'review' | 'oral' | 'mistake' | 'assessment' | 'chat';
+export type { Intent };
 
-// 学习模式 agentId → 意图
-const AGENT_INTENT: Record<string, Intent> = {
-  vocabulary: 'lookup',
-  'oral-practice': 'oral',
-  'error-review': 'mistake',
-  assessment: 'assessment',
-};
-
+// 本地包装：注入词库查询能力（自然语言查词需判断是否命中词库）
 export function classifyIntent(text: string, agentId?: string): Intent {
-  const t = text.trim();
-
-  // 学习模式明确时优先
-  if (agentId && AGENT_INTENT[agentId]) {
-    if (agentId === 'vocabulary') {
-      // 词汇模式下区分「查词」和「复习」
-      if (/复习|review|今日|计划/i.test(t)) return 'review';
-      return 'lookup';
-    }
-    return AGENT_INTENT[agentId];
-  }
-
-  // 默认模式：关键词分类
-  if (/复习|review|今日词|记忆曲线/i.test(t)) return 'review';
-  if (/口语|对话|场景|role.?play|陪练|说英语/i.test(t)) return 'oral';
-  if (/错题|mistake|易错|重测/i.test(t)) return 'mistake';
-  if (/测评|测试|能力|test|assessment/i.test(t)) return 'assessment';
-  if (/^[a-zA-Z]+$/.test(t)) return 'lookup';           // 纯英文单词 → 查词
-  // 自然语言查词：消息中含英文单词且命中本地词库 → 查词
-  const englishWord = t.match(/[a-zA-Z]{3,}/);
-  if (englishWord && getWord(englishWord[0])) return 'lookup';
-  return 'chat';
+  return classifyIntentPure(text, { agentId, wordExists: (w) => !!getWord(w) });
 }
 
 // ============= 词根词源查词 =============
@@ -74,7 +50,7 @@ export function lookupWord(input: string): WordLookupResult {
   const w = getWord(input.trim());
   if (!w) return { found: false, query: input.trim() };
 
-  const parts: WordLookupResult['word']['parts'] = [];
+  const parts: NonNullable<WordLookupResult['word']>['parts'] = [];
   if (w.prefix) parts.push({ type: 'prefix', text: w.prefix, meaning: w.prefix_meaning });
   if (w.root) parts.push({ type: 'root', text: w.root, meaning: w.root_meaning });
   if (w.suffix) parts.push({ type: 'suffix', text: w.suffix, meaning: w.suffix_meaning });
@@ -296,13 +272,7 @@ export function recordMistake(question: string, userAnswer: string, answer: stri
 
 // ============= 本地测评 =============
 
-export interface AssessmentQuestion {
-  id: number;
-  question: string;
-  options: string[];
-  answer: number;
-  point: string;
-}
+export type { AssessmentQuestion } from '../shared/assessment.js';
 
 const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   {
@@ -379,68 +349,22 @@ function cleanupStore(): void {
   if (assessmentStore.size > 50) assessmentStore.clear();
 }
 
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-// 基于已学单词动态出题（多题型：词根/词义/词族，选项随机）
+// 本地包装：把已学单词解析为 WordRef，调用共享纯函数出题
 function buildDynamicQuestions(): AssessmentQuestion[] {
   const memory = getAllWordMemory();
   if (memory.length === 0) return [];
 
-  const allWords = getAllWords();
-  const allRoots = [...new Set(allWords.map(w => w.root).filter(Boolean))].sort();
-  const questions: AssessmentQuestion[] = [];
-  let id = 100;
-
+  const memoryWords: WordRef[] = [];
   for (const m of memory.slice(0, 6)) {
     const w = getWord(m.word);
-    if (!w) continue;
-    const type = ['root', 'meaning', 'family'][Math.floor(Math.random() * 3)];
-
-    if (type === 'root' && w.root) {
-      const correct = w.root;
-      const distractors = shuffle(allRoots.filter(r => r !== correct)).slice(0, 3);
-      const options = shuffle([correct, ...distractors]);
-      questions.push({
-        id: ++id,
-        question: `${w.word}（${w.meaning}）的词根是？`,
-        options,
-        answer: options.indexOf(correct),
-        point: `词根 ${w.root}`,
-      });
-    } else if (type === 'meaning') {
-      const correct = w.meaning;
-      const distractors = shuffle(allWords.filter(x => x.id !== w.id).map(x => x.meaning)).slice(0, 3);
-      const options = shuffle([correct, ...distractors]);
-      questions.push({
-        id: ++id,
-        question: `${w.word} 的意思是？`,
-        options,
-        answer: options.indexOf(correct),
-        point: `词义 ${w.word}`,
-      });
-    } else if (w.root) {
-      const familyMembers = allWords.filter(x => x.root === w.root && x.id !== w.id);
-      if (familyMembers.length === 0) continue;
-      const correct = familyMembers[0].word;
-      const distractors = shuffle(allWords.filter(x => x.root !== w.root).map(x => x.word)).slice(0, 3);
-      const options = shuffle([correct, ...distractors]);
-      questions.push({
-        id: ++id,
-        question: `下列哪个词与 ${w.word} 同词根（${w.root}）？`,
-        options,
-        answer: options.indexOf(correct),
-        point: `词族 ${w.root}`,
-      });
-    }
+    if (w) memoryWords.push({ id: w.id, word: w.word, meaning: w.meaning, root: w.root });
   }
-  return questions;
+
+  const allWords: WordRef[] = getAllWords().map(w => ({
+    id: w.id, word: w.word, meaning: w.meaning, root: w.root,
+  }));
+
+  return buildDynamicQuestionsPure(memoryWords, allWords);
 }
 
 export function gradeAssessment(sessionId: string, answers: Array<{ id: number; answer: number }>) {

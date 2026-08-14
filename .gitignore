@@ -4,3 +4,10 @@ dist
 data
 *.log
 .DS_Store
+*.tsbuildinfo
+
+# tsc 编译产物（源码为 .ts，运行用 tsx，禁止提交编译产物遮蔽源码）
+server/*.js
+server/*.d.ts
+vite.config.js
+vite.config.d.ts

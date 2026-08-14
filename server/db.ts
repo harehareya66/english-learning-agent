@@ -98,6 +98,26 @@ db.exec(`
     value TEXT NOT NULL
   );
 
+  -- 用户表（账号体系：跨端数据同步的锚点，Phase 0）
+  CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    nickname TEXT,
+    avatar TEXT,
+    openid TEXT,
+    provider TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+
+  -- 词库分库表（词库扩充的锚点，Phase 3 分场景词库）
+  CREATE TABLE IF NOT EXISTS books (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    category TEXT,
+    description TEXT,
+    created_at TEXT NOT NULL
+  );
+
   CREATE INDEX IF NOT EXISTS idx_word_memory_word_id ON word_memory(word_id);
   CREATE INDEX IF NOT EXISTS idx_word_memory_next_review ON word_memory(next_review_at);
 `);
@@ -112,6 +132,36 @@ try {
   }
 } catch (e) {
   // 忽略错误（列可能已存在）
+}
+
+// 通用迁移工具：列不存在时添加（Phase 0 账号体系 + 词库分库准备）
+function addColumnIfMissing(table: string, column: string, ddl: string): void {
+  try {
+    const cols = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+    if (!cols.some(c => c.name === column)) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${ddl}`);
+      console.log(`[DB] Added ${column} column to ${table} table`);
+    }
+  } catch (e) {
+    // 忽略错误（列可能已存在）
+  }
+}
+
+// 账号体系：学习进度 / 错题本挂到用户维度（默认 null = 本地单用户，向后兼容）
+addColumnIfMissing('word_memory', 'user_id', 'TEXT');
+addColumnIfMissing('mistakes', 'user_id', 'TEXT');
+
+// 词库扩充：words 表支持分库 + 词频 + 例句
+addColumnIfMissing('words', 'book_id', 'TEXT');
+addColumnIfMissing('words', 'frequency', 'INTEGER');
+addColumnIfMissing('words', 'example', 'TEXT');
+
+// 用户维度索引（列已存在后创建）
+try {
+  db.exec('CREATE INDEX IF NOT EXISTS idx_word_memory_user_id ON word_memory(user_id)');
+  db.exec('CREATE INDEX IF NOT EXISTS idx_mistakes_user_id ON mistakes(user_id)');
+} catch (e) {
+  // 忽略（列可能存在异常）
 }
 
 // 类型定义
@@ -295,6 +345,9 @@ export interface DbWord {
   scene_tag: string | null;
   scene_example: string | null;
   scene_dialogue: string | null;
+  book_id?: string | null;
+  frequency?: number | null;
+  example?: string | null;
 }
 
 // 按单词精确查询
@@ -333,8 +386,8 @@ export function searchWords(q: string): DbWord[] {
 // 批量导入词库（种子数据）
 export function upsertWords(words: DbWord[]): number {
   const stmt = db.prepare(`
-    INSERT INTO words (id, word, phonetic, meaning, prefix, prefix_meaning, root, root_meaning, suffix, suffix_meaning, etymology, root_family, scene_tag, scene_example, scene_dialogue)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO words (id, word, phonetic, meaning, prefix, prefix_meaning, root, root_meaning, suffix, suffix_meaning, etymology, root_family, scene_tag, scene_example, scene_dialogue, book_id, frequency, example)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(word) DO UPDATE SET
       meaning = excluded.meaning,
       prefix = excluded.prefix,
@@ -347,11 +400,14 @@ export function upsertWords(words: DbWord[]): number {
       root_family = excluded.root_family,
       scene_tag = excluded.scene_tag,
       scene_example = excluded.scene_example,
-      scene_dialogue = excluded.scene_dialogue
+      scene_dialogue = excluded.scene_dialogue,
+      book_id = excluded.book_id,
+      frequency = excluded.frequency,
+      example = excluded.example
   `);
   const insertMany = db.transaction((items: DbWord[]) => {
     for (const w of items) {
-      stmt.run(w.id, w.word.toLowerCase(), w.phonetic, w.meaning, w.prefix, w.prefix_meaning, w.root, w.root_meaning, w.suffix, w.suffix_meaning, w.etymology, w.root_family, w.scene_tag, w.scene_example, w.scene_dialogue);
+      stmt.run(w.id, w.word.toLowerCase(), w.phonetic, w.meaning, w.prefix, w.prefix_meaning, w.root, w.root_meaning, w.suffix, w.suffix_meaning, w.etymology, w.root_family, w.scene_tag, w.scene_example, w.scene_dialogue, w.book_id, w.frequency, w.example);
     }
   });
   insertMany(words);
@@ -363,6 +419,7 @@ export function upsertWords(words: DbWord[]): number {
 export interface DbWordMemory {
   id: string;
   word_id: string;
+  user_id?: string | null;
   level: number;
   review_count: number;
   lapse_count: number;
@@ -423,6 +480,7 @@ export interface DbMistake {
   wrong_count: number;
   next_review_at: string | null;
   created_at: string;
+  user_id?: string | null;
 }
 
 export function addMistake(m: DbMistake): DbMistake {
@@ -483,4 +541,71 @@ export function getAllApiConfig(): Record<string, string> {
   return out;
 }
 
-export default db;
+// ============= 用户（账号体系，Phase 0） =============
+
+export interface DbUser {
+  id: string;
+  nickname: string | null;
+  avatar: string | null;
+  openid: string | null;
+  provider: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export function getUserById(id: string): DbUser | undefined {
+  const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
+  return stmt.get(id) as DbUser | undefined;
+}
+
+export function getUserByOpenId(openid: string, provider: string): DbUser | undefined {
+  const stmt = db.prepare('SELECT * FROM users WHERE openid = ? AND provider = ?');
+  return stmt.get(openid, provider) as DbUser | undefined;
+}
+
+export function upsertUser(user: DbUser): DbUser {
+  const stmt = db.prepare(`
+    INSERT INTO users (id, nickname, avatar, openid, provider, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      nickname = excluded.nickname,
+      avatar = excluded.avatar,
+      openid = excluded.openid,
+      provider = excluded.provider,
+      updated_at = excluded.updated_at
+  `);
+  stmt.run(user.id, user.nickname, user.avatar, user.openid, user.provider, user.created_at, user.updated_at);
+  return user;
+}
+
+// ============= 词库分库（Phase 3 分场景词库） =============
+
+export interface DbBook {
+  id: string;
+  name: string;
+  category: string | null;
+  description: string | null;
+  created_at: string;
+}
+
+export function listBooks(): DbBook[] {
+  const stmt = db.prepare('SELECT * FROM books ORDER BY created_at ASC');
+  return stmt.all() as DbBook[];
+}
+
+export function getBookByName(name: string): DbBook | undefined {
+  const stmt = db.prepare('SELECT * FROM books WHERE name = ?');
+  return stmt.get(name) as DbBook | undefined;
+}
+
+export function upsertBook(book: DbBook): DbBook {
+  const stmt = db.prepare(`
+    INSERT INTO books (id, name, category, description, created_at)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(name) DO UPDATE SET
+      category = excluded.category,
+      description = excluded.description
+  `);
+  stmt.run(book.id, book.name, book.category, book.description, book.created_at);
+  return book;
+}
