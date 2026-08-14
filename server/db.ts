@@ -428,15 +428,17 @@ export interface DbWordMemory {
   created_at: string;
 }
 
-export function getWordMemory(wordId: string): DbWordMemory | undefined {
-  const stmt = db.prepare('SELECT * FROM word_memory WHERE word_id = ?');
-  return stmt.get(wordId) as DbWordMemory | undefined;
+export function getWordMemory(wordId: string, userId?: string): DbWordMemory | undefined {
+  const uid = userId ?? DEFAULT_USER_ID;
+  const stmt = db.prepare('SELECT * FROM word_memory WHERE word_id = ? AND (user_id = ? OR user_id IS NULL)');
+  return stmt.get(wordId, uid) as DbWordMemory | undefined;
 }
 
 export function upsertWordMemory(mem: DbWordMemory): DbWordMemory {
+  const userId = mem.user_id ?? DEFAULT_USER_ID;
   const stmt = db.prepare(`
-    INSERT INTO word_memory (id, word_id, level, review_count, lapse_count, next_review_at, last_review_at, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO word_memory (id, word_id, user_id, level, review_count, lapse_count, next_review_at, last_review_at, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       level = excluded.level,
       review_count = excluded.review_count,
@@ -444,29 +446,33 @@ export function upsertWordMemory(mem: DbWordMemory): DbWordMemory {
       next_review_at = excluded.next_review_at,
       last_review_at = excluded.last_review_at
   `);
-  stmt.run(mem.id, mem.word_id, mem.level, mem.review_count, mem.lapse_count, mem.next_review_at, mem.last_review_at, mem.created_at);
+  stmt.run(mem.id, mem.word_id, userId, mem.level, mem.review_count, mem.lapse_count, mem.next_review_at, mem.last_review_at, mem.created_at);
   return mem;
 }
 
 // 待复习单词（next_review_at <= now）
-export function getDueWords(now: string): Array<DbWordMemory & { word: string; meaning: string }> {
+export function getDueWords(now: string, userId?: string): Array<DbWordMemory & { word: string; meaning: string }> {
+  const uid = userId ?? DEFAULT_USER_ID;
   const stmt = db.prepare(`
     SELECT wm.*, w.word, w.meaning FROM word_memory wm
     JOIN words w ON w.id = wm.word_id
     WHERE wm.next_review_at IS NOT NULL AND wm.next_review_at <= ?
+      AND (wm.user_id = ? OR wm.user_id IS NULL)
     ORDER BY wm.next_review_at ASC
   `);
-  return stmt.all(now) as Array<DbWordMemory & { word: string; meaning: string }>;
+  return stmt.all(now, uid) as Array<DbWordMemory & { word: string; meaning: string }>;
 }
 
 // 所有记忆中的单词（含词库信息）
-export function getAllWordMemory(): Array<DbWordMemory & { word: string; meaning: string }> {
+export function getAllWordMemory(userId?: string): Array<DbWordMemory & { word: string; meaning: string }> {
+  const uid = userId ?? DEFAULT_USER_ID;
   const stmt = db.prepare(`
     SELECT wm.*, w.word, w.meaning FROM word_memory wm
     JOIN words w ON w.id = wm.word_id
+    WHERE (wm.user_id = ? OR wm.user_id IS NULL)
     ORDER BY wm.next_review_at ASC
   `);
-  return stmt.all() as Array<DbWordMemory & { word: string; meaning: string }>;
+  return stmt.all(uid) as Array<DbWordMemory & { word: string; meaning: string }>;
 }
 
 // ============= 错题本 =============
@@ -484,22 +490,25 @@ export interface DbMistake {
 }
 
 export function addMistake(m: DbMistake): DbMistake {
+  const userId = m.user_id ?? DEFAULT_USER_ID;
   const stmt = db.prepare(`
-    INSERT INTO mistakes (id, question, answer, user_answer, knowledge_point, wrong_count, next_review_at, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO mistakes (id, question, answer, user_answer, knowledge_point, wrong_count, next_review_at, created_at, user_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
-  stmt.run(m.id, m.question, m.answer, m.user_answer, m.knowledge_point, m.wrong_count, m.next_review_at, m.created_at);
+  stmt.run(m.id, m.question, m.answer, m.user_answer, m.knowledge_point, m.wrong_count, m.next_review_at, m.created_at, userId);
   return m;
 }
 
-export function getMistakes(): DbMistake[] {
-  const stmt = db.prepare('SELECT * FROM mistakes ORDER BY created_at DESC');
-  return stmt.all() as DbMistake[];
+export function getMistakes(userId?: string): DbMistake[] {
+  const uid = userId ?? DEFAULT_USER_ID;
+  const stmt = db.prepare('SELECT * FROM mistakes WHERE (user_id = ? OR user_id IS NULL) ORDER BY created_at DESC');
+  return stmt.all(uid) as DbMistake[];
 }
 
-export function getDueMistakes(now: string): DbMistake[] {
-  const stmt = db.prepare('SELECT * FROM mistakes WHERE next_review_at IS NOT NULL AND next_review_at <= ? ORDER BY next_review_at ASC');
-  return stmt.all(now) as DbMistake[];
+export function getDueMistakes(now: string, userId?: string): DbMistake[] {
+  const uid = userId ?? DEFAULT_USER_ID;
+  const stmt = db.prepare('SELECT * FROM mistakes WHERE next_review_at IS NOT NULL AND next_review_at <= ? AND (user_id = ? OR user_id IS NULL) ORDER BY next_review_at ASC');
+  return stmt.all(now, uid) as DbMistake[];
 }
 
 export function updateMistakeReview(id: string, updates: Partial<Pick<DbMistake, 'wrong_count' | 'next_review_at' | 'user_answer'>>): boolean {
@@ -576,6 +585,28 @@ export function upsertUser(user: DbUser): DbUser {
   `);
   stmt.run(user.id, user.nickname, user.avatar, user.openid, user.provider, user.created_at, user.updated_at);
   return user;
+}
+
+// 本地单用户默认账号 ID（登录体系上线前，所有数据归属此账号；Phase 2 起由 openid 解析真实用户）
+export const DEFAULT_USER_ID = 'local-default';
+
+export function getDefaultUserId(): string {
+  return DEFAULT_USER_ID;
+}
+
+// 确保默认账号存在（服务启动时调用），返回其 ID
+export function ensureDefaultUser(): string {
+  const now = new Date().toISOString();
+  upsertUser({
+    id: DEFAULT_USER_ID,
+    nickname: '本地用户',
+    avatar: null,
+    openid: null,
+    provider: 'local',
+    created_at: now,
+    updated_at: now,
+  });
+  return DEFAULT_USER_ID;
 }
 
 // ============= 词库分库（Phase 3 分场景词库） =============

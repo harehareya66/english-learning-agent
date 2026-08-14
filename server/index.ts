@@ -458,6 +458,9 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
+// Phase 0 账号体系：播种默认本地用户（登录上线前，所有学习数据归属该账号）
+db.ensureDefaultUser();
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`
 ╔════════════════════════════════════════════╗
