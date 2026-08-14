@@ -139,7 +139,8 @@ app.get("/api/words/lookup", (req, res) => {
 
 // 单词库：按词根分组
 app.get("/api/words/list", (req, res) => {
-  const words = db.getAllWords();
+  const book = req.query.book ? String(req.query.book) : null;
+  const words = book ? db.getWordsByBook(book) : db.getAllWords();
   // 已学状态映射
   const learnedMap = new Map<string, number>();
   for (const m of db.getAllWordMemory()) {
@@ -158,6 +159,15 @@ app.get("/api/words/list", (req, res) => {
     });
   }
   res.json({ groups: Array.from(groups.values()), total: words.length });
+});
+
+// 词库列表（Phase 3 分库）
+app.get("/api/books", (_req, res) => {
+  const books = db.listBooks();
+  const counts = new Map(db.getBookWordCounts().map(c => [c.book_id, c.count]));
+  res.json({
+    books: books.map(b => ({ ...b, count: counts.get(b.id) ?? 0 })),
+  });
 });
 
 // 单词库：搜索
@@ -468,6 +478,13 @@ app.get("*", (req, res) => {
 
 // Phase 0 账号体系：播种默认本地用户（登录上线前，所有学习数据归属该账号）
 db.ensureDefaultUser();
+
+// Phase 3 词库分库：播种词库元数据（幂等）
+{
+  const now = new Date().toISOString();
+  db.upsertBook({ id: 'cet4', name: '四级核心', category: '大学英语四级', description: '四六级词频排序前 600 高频词', created_at: now });
+  db.upsertBook({ id: 'cet6', name: '六级核心', category: '大学英语六级', description: '四六级词频排序前 400 六级词', created_at: now });
+}
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`

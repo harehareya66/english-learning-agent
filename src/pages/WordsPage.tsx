@@ -36,6 +36,8 @@ export function WordsPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [learning, setLearning] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'unlearned' | 'learned'>('all');
+  const [book, setBook] = useState<string>('all');
+  const [books, setBooks] = useState<Array<{ id: string; name: string; count: number }>>([]);
 
   // 按学习状态筛选（未学/已学），并隐藏空词族
   const filteredGroups = useMemo(() => {
@@ -49,11 +51,20 @@ export function WordsPage() {
   }, [groups, filter]);
 
   useEffect(() => {
-    fetch('/api/words/list')
+    fetch('/api/books')
+      .then(r => r.json())
+      .then(d => setBooks(d.books || []))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    const url = book === 'all' ? '/api/words/list' : `/api/words/list?book=${book}`;
+    fetch(url)
       .then(r => r.json())
       .then(d => setGroups(d.groups || []))
       .finally(() => setLoading(false));
-  }, []);
+  }, [book]);
 
   useEffect(() => {
     const q = query.trim();
@@ -204,6 +215,13 @@ export function WordsPage() {
           </div>
         ) : (
           <div className="space-y-5">
+            {/* 词库筛选 */}
+            <Radio.Group value={book} onChange={(v) => setBook(v as string)} variant="default-filled" size="small">
+              <Radio.Button value="all">全部词库</Radio.Button>
+              {books.map(b => (
+                <Radio.Button key={b.id} value={b.id}>{b.name}（{b.count}）</Radio.Button>
+              ))}
+            </Radio.Group>
             {/* 学习状态筛选 */}
             <div className="flex items-center justify-between">
               <Radio.Group value={filter} onChange={(v) => setFilter(v as any)} variant="default-filled" size="small">

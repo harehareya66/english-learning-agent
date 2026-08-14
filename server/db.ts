@@ -646,3 +646,15 @@ export function upsertBook(book: DbBook): DbBook {
   stmt.run(book.id, book.name, book.category, book.description, book.created_at);
   return book;
 }
+
+// 按词库筛选单词
+export function getWordsByBook(bookId: string): DbWord[] {
+  const stmt = db.prepare('SELECT * FROM words WHERE book_id = ? ORDER BY frequency DESC, word ASC');
+  return stmt.all(bookId) as DbWord[];
+}
+
+// 各词库词数统计
+export function getBookWordCounts(): Array<{ book_id: string; count: number }> {
+  const stmt = db.prepare('SELECT book_id, COUNT(*) AS count FROM words WHERE book_id IS NOT NULL GROUP BY book_id');
+  return stmt.all() as Array<{ book_id: string; count: number }>;
+}

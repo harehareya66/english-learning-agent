@@ -1,7 +1,9 @@
 node_modules
 dist
 .env
-data
+data/*
+!data/scripts/
+!data/wordbook/
 *.log
 .DS_Store
 *.tsbuildinfo
