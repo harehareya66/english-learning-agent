@@ -327,6 +327,12 @@ export function clearAllData(): void {
   db.exec('DELETE FROM sessions');
 }
 
+// 重置学习进度：清空记忆库与错题本（保留词库、会话、配置）
+export function resetProgress(): void {
+  db.exec('DELETE FROM word_memory');
+  db.exec('DELETE FROM mistakes');
+}
+
 // ============= 词库（词根词源 + 场景） =============
 
 export interface DbWord {

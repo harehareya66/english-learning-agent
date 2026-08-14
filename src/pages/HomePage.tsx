@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Loading, Progress, Button } from 'tdesign-react';
+import { Loading, Progress, Button, DialogPlugin, MessagePlugin } from 'tdesign-react';
 import { BookOpen, RotateCw, BarChart3, MessageCircle, Target } from 'lucide-react';
 import { getDailyStats } from '../utils/daily';
 
@@ -10,6 +10,7 @@ interface Stats {
   dueWords: number;
   dueMistakes: number;
   mistakeCount: number;
+  newWordsCount: number;
   levelDist: number[];
 }
 
@@ -45,8 +46,37 @@ export function HomePage({ onNavigate }: HomePageProps) {
   }
 
   const mastered = (stats.levelDist[4] || 0) + (stats.levelDist[5] || 0);
-  const learning = stats.learnedCount - mastered;
-  const progress = stats.learnedCount > 0 ? Math.round((mastered / stats.learnedCount) * 100) : 0;
+  const learning = (stats.levelDist[1] || 0) + (stats.levelDist[2] || 0) + (stats.levelDist[3] || 0);
+  const fresh = stats.levelDist[0] || 0;
+  // 学习进度 = 已脱离「刚学 L0」的单词占比（比纯掌握度更友好）
+  const progress = stats.learnedCount > 0 ? Math.round(((stats.learnedCount - fresh) / stats.learnedCount) * 100) : 0;
+  // 背单词队列内容 = 到期词 + 新词
+  const reciteCount = stats.dueWords + (stats.newWordsCount || 0);
+  const hasRecite = reciteCount > 0;
+
+  const handleReset = () => {
+    DialogPlugin.confirm({
+      header: '重置学习进度',
+      body: '确定要清空所有学习进度（记忆库 + 错题本）吗？此操作不可撤销，词库本身会保留。',
+      confirmBtn: '确定重置',
+      cancelBtn: '取消',
+      onConfirm: async () => {
+        try {
+          const r = await fetch('/api/reset-progress', { method: 'POST' });
+          const d = await r.json();
+          if (d.success) {
+            MessagePlugin.success('已重置学习进度');
+            const s = await fetch('/api/stats').then(x => x.json());
+            setStats(s);
+          } else {
+            MessagePlugin.error('重置失败，请重试');
+          }
+        } catch {
+          MessagePlugin.error('网络错误，请重试');
+        }
+      },
+    });
+  };
 
   const cards = [
     { label: '词库单词', value: stats.totalWords, color: 'var(--td-brand-color)' },
@@ -81,11 +111,13 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <Button
             block
             theme="primary"
-            onClick={() => onNavigate('/recite')}
+            onClick={() => onNavigate(hasRecite ? '/recite' : '/review')}
             style={{ height: 56, fontSize: 16 }}
             icon={<Target size={20} />}
           >
-            开始背单词（今日 {daily.todayCount}/{daily.goal} · 待复习 {stats.dueCount} 个）
+            {hasRecite
+              ? `开始背单词（今日 ${daily.todayCount}/${daily.goal} · 待背 ${reciteCount} 词）`
+              : `去复习巩固（今日待巩固 ${stats.dueMistakes} 道错题）`}
           </Button>
           <div className="text-center text-xs mt-2" style={{ color: 'var(--td-text-color-placeholder)' }}>
             🔥 连续打卡 {daily.streak} 天
@@ -99,16 +131,22 @@ export function HomePage({ onNavigate }: HomePageProps) {
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium" style={{ color: 'var(--td-text-color-primary)' }}>
-              掌握度概览
+              学习进度
             </span>
             <span className="text-xs" style={{ color: 'var(--td-text-color-secondary)' }}>
-              已掌握 {mastered} / 已学 {stats.learnedCount}
+              学习中 {learning} · 已掌握 {mastered} / 已学 {stats.learnedCount}
             </span>
           </div>
           <Progress percentage={progress} theme={progress >= 60 ? 'success' : 'warning'} />
           <div className="flex gap-6 mt-3 text-xs" style={{ color: 'var(--td-text-color-secondary)' }}>
             <span>今日单词复习 {stats.dueWords} 个</span>
             <span>今日错题巩固 {stats.dueMistakes} 道</span>
+            <button
+              onClick={handleReset}
+              style={{ color: 'var(--td-text-color-placeholder)', background: 'none', border: 'none', cursor: 'pointer', marginLeft: 'auto', fontSize: 12 }}
+            >
+              重置学习进度
+            </button>
           </div>
         </div>
 

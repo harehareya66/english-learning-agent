@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Input, Button, Tag, MessagePlugin, Loading } from 'tdesign-react';
+import { Input, Button, Tag, MessagePlugin, Loading, Radio } from 'tdesign-react';
 import { SearchIcon, PlusIcon, SoundIcon } from 'tdesign-icons-react';
 import { speak } from '../utils/speech';
 
@@ -35,6 +35,18 @@ export function WordsPage() {
   const [searchResults, setSearchResults] = useState<DbWord[] | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [learning, setLearning] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'unlearned' | 'learned'>('all');
+
+  // 按学习状态筛选（未学/已学），并隐藏空词族
+  const filteredGroups = useMemo(() => {
+    if (filter === 'all') return groups;
+    return groups
+      .map(g => ({
+        ...g,
+        words: g.words.filter(w => (filter === 'learned' ? w.learned : !w.learned)),
+      }))
+      .filter(g => g.words.length > 0);
+  }, [groups, filter]);
 
   useEffect(() => {
     fetch('/api/words/list')
@@ -192,7 +204,18 @@ export function WordsPage() {
           </div>
         ) : (
           <div className="space-y-5">
-            {groups.map(g => (
+            {/* 学习状态筛选 */}
+            <div className="flex items-center justify-between">
+              <Radio.Group value={filter} onChange={(v) => setFilter(v as any)} variant="default-filled" size="small">
+                <Radio.Button value="all">全部</Radio.Button>
+                <Radio.Button value="unlearned">未学</Radio.Button>
+                <Radio.Button value="learned">已学</Radio.Button>
+              </Radio.Group>
+              <span className="text-xs" style={{ color: 'var(--td-text-color-secondary)' }}>
+                {filteredGroups.reduce((n, g) => n + g.words.length, 0)} 词
+              </span>
+            </div>
+            {filteredGroups.map(g => (
               <div key={g.root}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="font-medium" style={{ color: 'var(--td-text-color-primary)' }}>
@@ -207,6 +230,11 @@ export function WordsPage() {
                 </div>
               </div>
             ))}
+            {filteredGroups.length === 0 && (
+              <div className="text-sm py-8 text-center" style={{ color: 'var(--td-text-color-placeholder)' }}>
+                没有符合条件的单词
+              </div>
+            )}
           </div>
         )}
       </div>

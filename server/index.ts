@@ -184,6 +184,7 @@ app.get("/api/stats", (req, res) => {
   const dueWords = db.getDueWords(now).length;
   const dueMistakes = db.getDueMistakes(now).length;
   const mistakeCount = db.getMistakes().length;
+  const newWordsCount = Math.max(0, totalWords - learnedCount);
 
   // 掌握度分布（0-5）
   const levelDist = [0, 0, 0, 0, 0, 0];
@@ -199,8 +200,15 @@ app.get("/api/stats", (req, res) => {
     dueWords,
     dueMistakes,
     mistakeCount,
+    newWordsCount,
     levelDist,
   });
+});
+
+// 重置学习进度（清空记忆库与错题本）
+app.post("/api/reset-progress", (req, res) => {
+  db.resetProgress();
+  res.json({ success: true });
 });
 
 app.get("/api/review/today", (req, res) => {
