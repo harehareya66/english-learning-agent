@@ -484,7 +484,9 @@ export function RecitePage() {
               {renderEtymology()}
               <div className="mt-4 space-y-2">
                 <div className="text-xs text-center" style={{ color: 'var(--td-text-color-placeholder)' }}>
-                  看完解释，如实选择你的掌握程度
+                  {current.root || current.etymology
+                    ? '看完解释，如实选择你的掌握程度'
+                    : '回忆一下这个词的释义，如实选择掌握程度'}
                 </div>
                 <div className="flex gap-3">
                   <Button block theme="warning" loading={recording} onClick={() => advance('fuzzy')}>模糊</Button>
