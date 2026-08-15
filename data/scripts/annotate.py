@@ -47,11 +47,29 @@ def match_root(candidate):
         c2 = candidate[:-1]
         if c2 in ROOT_EXACT:
             return ROOT_EXACT[c2]
-    # 词干末尾有连接元音 o/i/u（如 demograph 实际是 demo+graph，这里处理候选本身）
+    # 去连接元音 i/o/u（如 senti→sent、solit→sol、navig→nav、tuiti→tuit）
+    if candidate[-1] in 'iou' and len(candidate) >= 3:
+        c3 = candidate[:-1]
+        if c3 in ROOT_EXACT:
+            return ROOT_EXACT[c3]
     return None
 
 def match_with_suffix(stem):
-    """剥后缀并匹配词根。返回 (root, suffix, root_candidate) 或 None"""
+    """剥后缀并匹配词根。支持剥一个或两个后缀（如 casualty=cas+ual+ty）。返回 (root, suffix, root_candidate) 或 None"""
+    # 两个后缀
+    for s1 in ALL_SUFFIXES:
+        if not stem.endswith(s1["s"]) or len(stem) - len(s1["s"]) < 2:
+            continue
+        mid = stem[:-len(s1["s"])]
+        for s2 in ALL_SUFFIXES:
+            if not mid.endswith(s2["s"]) or len(mid) - len(s2["s"]) < 2:
+                continue
+            candidate = mid[:-len(s2["s"])]
+            r = match_root(candidate)
+            if r:
+                combined = {"s": f"{s2['s']}+{s1['s']}", "m": f"{s2['m']}+{s1['m']}"}
+                return (r, combined, candidate)
+    # 一个后缀
     for s in ALL_SUFFIXES:
         if stem.endswith(s["s"]) and len(stem) - len(s["s"]) >= 2:
             candidate = stem[:-len(s["s"])]

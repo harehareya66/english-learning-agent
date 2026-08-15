@@ -235,6 +235,7 @@ app.get("/api/recite/queue", (req, res) => {
     word: w.word,
     meaning: w.meaning,
     level: w.level,
+    pos: w.pos,
   }));
   const learnedIds = new Set(db.getAllWordMemory().map(m => m.word_id));
   const newWords = db.getAllWords()
@@ -251,6 +252,7 @@ app.get("/api/recite/queue", (req, res) => {
       etymology: w.etymology,
       scene_tag: w.scene_tag,
       scene_example: w.scene_example,
+      pos: w.pos,
     }));
   res.json({ due, newWords, goal });
 });

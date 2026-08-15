@@ -155,6 +155,7 @@ addColumnIfMissing('mistakes', 'user_id', 'TEXT');
 addColumnIfMissing('words', 'book_id', 'TEXT');
 addColumnIfMissing('words', 'frequency', 'INTEGER');
 addColumnIfMissing('words', 'example', 'TEXT');
+addColumnIfMissing('words', 'pos', 'TEXT');
 
 // 用户维度索引（列已存在后创建）
 try {
@@ -354,6 +355,7 @@ export interface DbWord {
   book_id?: string | null;
   frequency?: number | null;
   example?: string | null;
+  pos?: string | null;
 }
 
 // 按单词精确查询
@@ -475,11 +477,12 @@ export function getDueWords(now: string, userId?: string): Array<DbWordMemory & 
   suffix_meaning: string | null;
   etymology: string | null;
   example: string | null;
+  pos: string | null;
 }> {
   const uid = userId ?? DEFAULT_USER_ID;
   const stmt = db.prepare(`
     SELECT wm.*, w.word, w.meaning, w.phonetic, w.prefix, w.prefix_meaning,
-           w.root, w.root_meaning, w.suffix, w.suffix_meaning, w.etymology, w.example
+           w.root, w.root_meaning, w.suffix, w.suffix_meaning, w.etymology, w.example, w.pos
     FROM word_memory wm
     JOIN words w ON w.id = wm.word_id
     WHERE wm.next_review_at IS NOT NULL AND wm.next_review_at <= ?
@@ -498,6 +501,7 @@ export function getDueWords(now: string, userId?: string): Array<DbWordMemory & 
     suffix_meaning: string | null;
     etymology: string | null;
     example: string | null;
+    pos: string | null;
   }>;
 }
 

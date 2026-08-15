@@ -18,6 +18,7 @@ interface ReciteItem {
   etymology?: string | null;
   scene_tag?: string | null;
   scene_example?: string | null;
+  pos?: string | null;
   isNew?: boolean;
   qtype: QType;
   options?: string[];
@@ -31,6 +32,7 @@ interface WordRef {
   id: string;
   word: string;
   meaning: string;
+  pos?: string | null;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -59,8 +61,12 @@ function pickQType(isNew: boolean): QType {
   return 'pronounce';
 }
 
-function buildOptions(current: { word: string; meaning: string }, pool: WordRef[], qtype: 'meaning' | 'listen') {
-  const others = shuffle(pool.filter(w => w.word !== current.word));
+function buildOptions(current: { word: string; meaning: string; pos?: string | null }, pool: WordRef[], qtype: 'meaning' | 'listen') {
+  // 干扰项优先选同词性（提高区分度），同词性不足 3 个时用任意词补齐
+  const candidates = pool.filter(w => w.word !== current.word);
+  const samePos = candidates.filter(w => current.pos && w.pos === current.pos);
+  const source = samePos.length >= 3 ? samePos : [...samePos, ...shuffle(candidates.filter(w => !(current.pos && w.pos === current.pos)))];
+  const others = shuffle(source);
   if (qtype === 'listen') {
     // 听音选词：英文选项 + 中文释义副文本
     const distractors = others.slice(0, 3).map(w => ({ word: w.word, meaning: stripPos(w.meaning) }));
@@ -125,7 +131,7 @@ export function RecitePage() {
         const due: Omit<ReciteItem, 'qtype'>[] = (q.due || []).map((x: any) => ({ ...x, isNew: false }));
         const news: Omit<ReciteItem, 'qtype'>[] = (q.newWords || []).map((x: any) => ({ ...x, isNew: true }));
         const all = [...due, ...news];
-        const pool: WordRef[] = (w.groups || []).flatMap((g: any) => g.words.map((x: any) => ({ id: x.id, word: x.word, meaning: x.meaning })));
+        const pool: WordRef[] = (w.groups || []).flatMap((g: any) => g.words.map((x: any) => ({ id: x.id, word: x.word, meaning: x.meaning, pos: x.pos })));
         const withQ = all.map(item => assignQuestion(item, pool));
         setQueue(withQ);
         setTotal(withQ.length);

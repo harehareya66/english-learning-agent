@@ -3829,11 +3829,11 @@
     "frequency": 422,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
+    "root": "act",
+    "root_meaning": "做/行动",
     "suffix": null,
     "suffix_meaning": null,
-    "etymology": null
+    "etymology": "act(做/行动)"
   },
   {
     "word": "focus",
@@ -4123,11 +4123,11 @@
     "frequency": 399,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "path",
+    "root_meaning": "感觉/病",
+    "suffix": "ent",
+    "suffix_meaning": "…的/…的人",
+    "etymology": "path(感觉/病) + ent(…的/…的人)"
   },
   {
     "word": "rule",
@@ -4769,9 +4769,9 @@
     "prefix_meaning": null,
     "root": "gen",
     "root_meaning": "出生/产生",
-    "suffix": "al",
-    "suffix_meaning": "形容词后缀(…的)",
-    "etymology": "gen(出生/产生) + al(形容词后缀(…的))"
+    "suffix": "er+al",
+    "suffix_meaning": "…的人/物+形容词后缀(…的)",
+    "etymology": "gen(出生/产生) + er+al(…的人/物+形容词后缀(…的))"
   },
   {
     "word": "international",
@@ -4865,11 +4865,11 @@
     "frequency": 348,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "sess",
+    "root_meaning": "坐",
+    "suffix": "ation",
+    "suffix_meaning": "名词后缀(动作)",
+    "etymology": "sess(坐) + ation(名词后缀(动作))"
   },
   {
     "word": "essay",
@@ -4907,11 +4907,11 @@
     "frequency": 346,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "gress",
+    "root_meaning": "行走",
+    "suffix": "ate",
+    "suffix_meaning": "动词后缀(使)",
+    "etymology": "gress(行走) + ate(动词后缀(使))"
   },
   {
     "word": "decade",
@@ -4937,9 +4937,9 @@
     "prefix_meaning": null,
     "root": "medic",
     "root_meaning": "医疗",
-    "suffix": "ical",
-    "suffix_meaning": "形容词后缀(…的)",
-    "etymology": "medic(医疗) + ical(形容词后缀(…的))"
+    "suffix": "ic+al",
+    "suffix_meaning": "形容词后缀(…的)+形容词后缀(…的)",
+    "etymology": "medic(医疗) + ic+al(形容词后缀(…的)+形容词后缀(…的))"
   },
   {
     "word": "miss",
@@ -5063,9 +5063,9 @@
     "prefix_meaning": null,
     "root": "gen",
     "root_meaning": "出生/产生",
-    "suffix": "ation",
-    "suffix_meaning": "名词后缀(动作)",
-    "etymology": "gen(出生/产生) + ation(名词后缀(动作))"
+    "suffix": "er+ation",
+    "suffix_meaning": "…的人/物+名词后缀(动作)",
+    "etymology": "gen(出生/产生) + er+ation(…的人/物+名词后缀(动作))"
   },
   {
     "word": "rich",
@@ -5945,9 +5945,9 @@
     "prefix_meaning": null,
     "root": "physio",
     "root_meaning": "自然/生理",
-    "suffix": "ical",
-    "suffix_meaning": "形容词后缀(…的)",
-    "etymology": "physio(自然/生理) + ical(形容词后缀(…的))"
+    "suffix": "ic+al",
+    "suffix_meaning": "形容词后缀(…的)+形容词后缀(…的)",
+    "etymology": "physio(自然/生理) + ic+al(形容词后缀(…的)+形容词后缀(…的))"
   },
   {
     "word": "team",
@@ -6277,13 +6277,13 @@
     "meaning": "尤其",
     "book_id": "cet4",
     "frequency": 274,
-    "prefix": null,
-    "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "prefix": "e",
+    "prefix_meaning": "向外",
+    "root": "spec",
+    "root_meaning": "看",
+    "suffix": "ial+ly",
+    "suffix_meaning": "形容词后缀(…的)+副词后缀",
+    "etymology": "e(向外) + spec(看) + ial+ly(形容词后缀(…的)+副词后缀)"
   },
   {
     "word": "farm",
@@ -7497,11 +7497,11 @@
     "frequency": 224,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "me",
+    "root_meaning": "走/通过",
+    "suffix": "et+ing",
+    "suffix_meaning": "名词后缀(小)+进行时/动名词",
+    "etymology": "me(走/通过) + et+ing(名词后缀(小)+进行时/动名词)"
   },
   {
     "word": "feature",
@@ -8447,13 +8447,13 @@
     "meaning": "摘录",
     "book_id": "cet6",
     "frequency": 72,
-    "prefix": null,
-    "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
+    "prefix": "e",
+    "prefix_meaning": "向外",
+    "root": "cerpt",
+    "root_meaning": "摘取",
     "suffix": null,
     "suffix_meaning": null,
-    "etymology": null
+    "etymology": "e(向外) + cerpt(摘取)"
   },
   {
     "word": "transition",
@@ -8717,9 +8717,9 @@
     "prefix_meaning": null,
     "root": "skept",
     "root_meaning": "怀疑",
-    "suffix": "ical",
-    "suffix_meaning": "形容词后缀(…的)",
-    "etymology": "skept(怀疑) + ical(形容词后缀(…的))"
+    "suffix": "ic+al",
+    "suffix_meaning": "形容词后缀(…的)+形容词后缀(…的)",
+    "etymology": "skept(怀疑) + ic+al(形容词后缀(…的)+形容词后缀(…的))"
   },
   {
     "word": "vice",
@@ -8785,11 +8785,11 @@
     "frequency": 36,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "lingu",
+    "root_meaning": "舌头/语言",
+    "suffix": "ist+ic",
+    "suffix_meaning": "…的人(从事者)+形容词后缀(…的)",
+    "etymology": "lingu(舌头/语言) + ist+ic(…的人(从事者)+形容词后缀(…的))"
   },
   {
     "word": "referee",
@@ -9203,13 +9203,13 @@
     "meaning": "描绘",
     "book_id": "cet6",
     "frequency": 27,
-    "prefix": null,
-    "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
+    "prefix": "pro",
+    "prefix_meaning": "向前",
+    "root": "tract",
+    "root_meaning": "拉",
     "suffix": null,
     "suffix_meaning": null,
-    "etymology": null
+    "etymology": "pro(向前) + tract(拉)"
   },
   {
     "word": "expedition",
@@ -9249,9 +9249,9 @@
     "prefix_meaning": "向内/否定",
     "root": "corpor",
     "root_meaning": "身体",
-    "suffix": "ate",
-    "suffix_meaning": "动词后缀(使)",
-    "etymology": "in(向内/否定) + corpor(身体) + ate(动词后缀(使))"
+    "suffix": "or+ate",
+    "suffix_meaning": "…的人/物+动词后缀(使)",
+    "etymology": "in(向内/否定) + corpor(身体) + or+ate(…的人/物+动词后缀(使))"
   },
   {
     "word": "precede",
@@ -9401,11 +9401,11 @@
     "frequency": 24,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "alter",
+    "root_meaning": "其他",
+    "suffix": "en",
+    "suffix_meaning": "动词后缀(使/变)",
+    "etymology": "alter(其他) + en(动词后缀(使/变))"
   },
   {
     "word": "array",
@@ -9581,13 +9581,13 @@
     "meaning": "减轻",
     "book_id": "cet6",
     "frequency": 22,
-    "prefix": null,
-    "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "prefix": "ad",
+    "prefix_meaning": "朝向",
+    "root": "lev",
+    "root_meaning": "举/轻",
+    "suffix": "ate",
+    "suffix_meaning": "动词后缀(使)",
+    "etymology": "ad(朝向) + lev(举/轻) + ate(动词后缀(使))"
   },
   {
     "word": "casino",
@@ -9725,9 +9725,9 @@
     "prefix_meaning": null,
     "root": "medic",
     "root_meaning": "医疗",
-    "suffix": "ation",
-    "suffix_meaning": "名词后缀(动作)",
-    "etymology": "medic(医疗) + ation(名词后缀(动作))"
+    "suffix": "ic+ation",
+    "suffix_meaning": "形容词后缀(…的)+名词后缀(动作)",
+    "etymology": "medic(医疗) + ic+ation(形容词后缀(…的)+名词后缀(动作))"
   },
   {
     "word": "merge",
@@ -9919,11 +9919,11 @@
     "frequency": 20,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "pract",
+    "root_meaning": "做/实践",
+    "suffix": "ition+er",
+    "suffix_meaning": "名词后缀(动作)+…的人/物",
+    "etymology": "pract(做/实践) + ition+er(名词后缀(动作)+…的人/物)"
   },
   {
     "word": "rigid",
@@ -10157,11 +10157,11 @@
     "frequency": 18,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "sens",
+    "root_meaning": "感觉",
+    "suffix": "ment",
+    "suffix_meaning": "名词后缀(结果/状态)",
+    "etymology": "sens(感觉) + ment(名词后缀(结果/状态))"
   },
   {
     "word": "surpass",
@@ -10197,13 +10197,13 @@
     "meaning": "前所未有的",
     "book_id": "cet6",
     "frequency": 18,
-    "prefix": null,
-    "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "prefix": "un+pre",
+    "prefix_meaning": "否定+在…之前",
+    "root": "ced",
+    "root_meaning": "走/让步",
+    "suffix": "ent+ed",
+    "suffix_meaning": "…的/…的人+过去式/过去分词",
+    "etymology": "un+pre(否定+在…之前) + ced(走/让步) + ent+ed(…的/…的人+过去式/过去分词)"
   },
   {
     "word": "vaccine",
@@ -10801,11 +10801,11 @@
     "frequency": 15,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "fract",
+    "root_meaning": "破/打碎",
+    "suffix": "ile",
+    "suffix_meaning": "形容词后缀(易…的/能…的)",
+    "etymology": "fract(破/打碎) + ile(形容词后缀(易…的/能…的))"
   },
   {
     "word": "grid",
@@ -12187,11 +12187,11 @@
     "frequency": 11,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "cas",
+    "root_meaning": "落下/事件",
+    "suffix": "ual+ty",
+    "suffix_meaning": "形容词后缀(…的)+名词后缀(性质)",
+    "etymology": "cas(落下/事件) + ual+ty(形容词后缀(…的)+名词后缀(性质))"
   },
   {
     "word": "closet",
@@ -12315,9 +12315,9 @@
     "prefix_meaning": null,
     "root": "juven",
     "root_meaning": "年轻",
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": "juven(年轻)"
+    "suffix": "ile",
+    "suffix_meaning": "形容词后缀(易…的/能…的)",
+    "etymology": "juven(年轻) + ile(形容词后缀(易…的/能…的))"
   },
   {
     "word": "numerical",
@@ -12329,9 +12329,9 @@
     "prefix_meaning": null,
     "root": "numer",
     "root_meaning": "数",
-    "suffix": "ical",
-    "suffix_meaning": "形容词后缀(…的)",
-    "etymology": "numer(数) + ical(形容词后缀(…的))"
+    "suffix": "er+ical",
+    "suffix_meaning": "…的人/物+形容词后缀(…的)",
+    "etymology": "numer(数) + er+ical(…的人/物+形容词后缀(…的))"
   },
   {
     "word": "perpetual",
@@ -13379,9 +13379,9 @@
     "prefix_meaning": null,
     "root": "cred",
     "root_meaning": "相信",
-    "suffix": "ential",
-    "suffix_meaning": "形容词后缀(…的)",
-    "etymology": "cred(相信) + ential(形容词后缀(…的))"
+    "suffix": "ent+ial",
+    "suffix_meaning": "…的/…的人+形容词后缀(…的)",
+    "etymology": "cred(相信) + ent+ial(…的/…的人+形容词后缀(…的))"
   },
   {
     "word": "cripple",
@@ -13797,11 +13797,11 @@
     "frequency": 9,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "not",
+    "root_meaning": "知道/标记",
+    "suffix": "or+ious",
+    "suffix_meaning": "…的人/物+形容词后缀(…的)",
+    "etymology": "not(知道/标记) + or+ious(…的人/物+形容词后缀(…的))"
   },
   {
     "word": "pamphlet",
@@ -13911,9 +13911,9 @@
     "prefix_meaning": null,
     "root": "sacr",
     "root_meaning": "神圣",
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": "sacr(神圣)"
+    "suffix": "ed",
+    "suffix_meaning": "过去式/过去分词",
+    "etymology": "sacr(神圣) + ed(过去式/过去分词)"
   },
   {
     "word": "solidarity",
@@ -13923,11 +13923,11 @@
     "frequency": 9,
     "prefix": null,
     "prefix_meaning": null,
-    "root": null,
-    "root_meaning": null,
-    "suffix": null,
-    "suffix_meaning": null,
-    "etymology": null
+    "root": "solid",
+    "root_meaning": "坚固",
+    "suffix": "ar+ity",
+    "suffix_meaning": "…的人/物+名词后缀(性质)",
+    "etymology": "solid(坚固) + ar+ity(…的人/物+名词后缀(性质))"
   },
   {
     "word": "sovereign",

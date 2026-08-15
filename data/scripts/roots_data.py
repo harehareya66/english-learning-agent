@@ -71,7 +71,7 @@ PREFIXES = [
 ROOTS = [
     {"r": "act", "m": "做/行动", "variants": ["act", "ag"]},
     {"r": "agri", "m": "田地/农业", "variants": ["agri", "agr"]},
-    {"r": "alter", "m": "其他", "variants": ["alter", "altr"]},
+    {"r": "alter", "m": "其他", "variants": ["alter", "altr", "ali"]},
     {"r": "anim", "m": "生命/灵魂", "variants": ["anim"]},
     {"r": "ann", "m": "年", "variants": ["ann", "enn"]},
     {"r": "aud", "m": "听", "variants": ["aud", "audi"]},
@@ -186,7 +186,7 @@ ROOTS = [
     {"r": "test", "m": "证明", "variants": ["test", "testi"]},
     {"r": "text", "m": "编织", "variants": ["text", "textur"]},
     {"r": "tort", "m": "扭", "variants": ["tort", "tors", "torqu"]},
-    {"r": "tract", "m": "拉", "variants": ["tract", "trah", "treat", "trait"]},
+    {"r": "tract", "m": "拉", "variants": ["tract", "trah", "treat", "trait", "tray"]},
     {"r": "tribut", "m": "给予", "variants": ["tribut", "tribute"]},
     {"r": "trop", "m": "转", "variants": ["trop", "troph", "trieve"]},
     {"r": "vac", "m": "空", "variants": ["vac", "van", "vast", "void"]},
@@ -291,6 +291,9 @@ SUFFIXES = [
     {"s": "mania", "m": "名词后缀(狂热)"},
     {"s": "tomy", "m": "名词后缀(切开)"},
     {"s": "metry", "m": "名词后缀(测量)"},
+    {"s": "ed", "m": "过去式/过去分词"},
+    {"s": "ing", "m": "进行时/动名词"},
+    {"s": "ile", "m": "形容词后缀(易…的/能…的)"},
 ]
 
 # ==================== 补充词根（覆盖六级学术词） ====================
@@ -402,6 +405,7 @@ ROOTS_SUPPLEMENT = [
     {"r": "the", "m": "神/放置", "variants": ["the", "theo"]},
     {"r": "ec", "m": "外/生态", "variants": ["ec", "eco"]},
     {"r": "centr", "m": "中心", "variants": ["centr", "center"]},
+    {"r": "cerpt", "m": "摘取", "variants": ["cerpt", "carpt"]},
 ]
 
 # ==================== 补充前缀 ====================
