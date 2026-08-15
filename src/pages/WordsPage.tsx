@@ -297,20 +297,20 @@ export function WordsPage() {
                   };
                   return (
                     <>
-                      {rootGroups.length > 0 && (
-                        <div>
-                          <div className="text-xs font-medium mb-2 mt-1" style={{ color: 'var(--td-text-color-secondary)' }}>
-                            词根词族 · 词根记忆法
-                          </div>
-                          {rootGroups.map(renderGroup)}
-                        </div>
-                      )}
                       {letterGroups.length > 0 && (
                         <div>
-                          <div className="text-xs font-medium mb-2 mt-4" style={{ color: 'var(--td-text-color-secondary)' }}>
+                          <div className="text-xs font-medium mb-2 mt-1" style={{ color: 'var(--td-text-color-secondary)' }}>
                             基础词 · 按字母
                           </div>
                           {letterGroups.map(renderGroup)}
+                        </div>
+                      )}
+                      {rootGroups.length > 0 && (
+                        <div>
+                          <div className="text-xs font-medium mb-2 mt-4" style={{ color: 'var(--td-text-color-secondary)' }}>
+                            词根词族 · 词根记忆法
+                          </div>
+                          {rootGroups.map(renderGroup)}
                         </div>
                       )}
                     </>

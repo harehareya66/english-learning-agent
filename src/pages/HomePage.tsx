@@ -118,7 +118,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             icon={<Target size={20} />}
           >
             {hasRecite
-              ? `开始背单词（今日 ${daily.todayCount}/${daily.goal} · 待背 ${reciteCount} 词）`
+              ? `开始背单词（今日 ${daily.todayCount}/${daily.goal} · ${stats.dueWords > 0 ? `待复习 ${stats.dueWords} 个 · ` : ''}新词 ${Math.min(stats.newWordsCount || 0, daily.goal)} 个）`
               : `去复习巩固（今日待巩固 ${stats.dueMistakes} 道错题）`}
           </Button>
           <div className="text-center text-xs mt-2" style={{ color: 'var(--td-text-color-placeholder)' }}>
