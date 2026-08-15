@@ -280,7 +280,8 @@ export function RecitePage() {
   }
 
   const progress = total > 0 ? Math.round((done / total) * 100) : 0;
-  const isSpell = current.qtype === 'spell';
+  // 拼写题/听音选词不能显示单词（否则答案泄露），看词选义/发音评测才显示单词
+  const showWord = current.qtype === 'meaning' || current.qtype === 'pronounce';
 
   const renderEtymology = () => (
     <div className="mt-4 space-y-2 text-left p-3 rounded-lg" style={{ backgroundColor: 'var(--td-bg-color-page)' }}>
@@ -319,8 +320,8 @@ export function RecitePage() {
 
         {/* 题目卡片 */}
         <div className="rounded-2xl p-8" style={{ backgroundColor: 'var(--td-bg-color-container)' }}>
-          {/* 单词 + 发音（拼写题隐藏单词，避免泄露答案） */}
-          {!isSpell && (
+          {/* 单词 + 发音（拼写题/听音选词隐藏单词，避免泄露答案） */}
+          {showWord && (
             <>
               <div className="flex items-center justify-center gap-3 mb-1">
                 <span className="text-5xl font-bold" style={{ color: 'var(--td-text-color-primary)' }}>
