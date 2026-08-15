@@ -362,6 +362,12 @@ export function getWord(word: string): DbWord | undefined {
   return stmt.get(word.toLowerCase()) as DbWord | undefined;
 }
 
+// 按 ID 查询单词
+export function getWordById(id: string): DbWord | undefined {
+  const stmt = db.prepare('SELECT * FROM words WHERE id = ?');
+  return stmt.get(id) as DbWord | undefined;
+}
+
 // 按词根查询词族
 export function getWordsByRoot(root: string): DbWord[] {
   const stmt = db.prepare("SELECT * FROM words WHERE root = ? OR root_family LIKE ?");
@@ -456,17 +462,43 @@ export function upsertWordMemory(mem: DbWordMemory): DbWordMemory {
   return mem;
 }
 
-// 待复习单词（next_review_at <= now）
-export function getDueWords(now: string, userId?: string): Array<DbWordMemory & { word: string; meaning: string }> {
+// 待复习单词（next_review_at <= now），含词根词源信息（重学面板用）
+export function getDueWords(now: string, userId?: string): Array<DbWordMemory & {
+  word: string;
+  meaning: string;
+  phonetic: string | null;
+  prefix: string | null;
+  prefix_meaning: string | null;
+  root: string | null;
+  root_meaning: string | null;
+  suffix: string | null;
+  suffix_meaning: string | null;
+  etymology: string | null;
+  example: string | null;
+}> {
   const uid = userId ?? DEFAULT_USER_ID;
   const stmt = db.prepare(`
-    SELECT wm.*, w.word, w.meaning FROM word_memory wm
+    SELECT wm.*, w.word, w.meaning, w.phonetic, w.prefix, w.prefix_meaning,
+           w.root, w.root_meaning, w.suffix, w.suffix_meaning, w.etymology, w.example
+    FROM word_memory wm
     JOIN words w ON w.id = wm.word_id
     WHERE wm.next_review_at IS NOT NULL AND wm.next_review_at <= ?
       AND (wm.user_id = ? OR wm.user_id IS NULL)
     ORDER BY wm.next_review_at ASC
   `);
-  return stmt.all(now, uid) as Array<DbWordMemory & { word: string; meaning: string }>;
+  return stmt.all(now, uid) as Array<DbWordMemory & {
+    word: string;
+    meaning: string;
+    phonetic: string | null;
+    prefix: string | null;
+    prefix_meaning: string | null;
+    root: string | null;
+    root_meaning: string | null;
+    suffix: string | null;
+    suffix_meaning: string | null;
+    etymology: string | null;
+    example: string | null;
+  }>;
 }
 
 // 所有记忆中的单词（含词库信息）

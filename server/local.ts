@@ -4,6 +4,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
   getWord,
+  getWordById,
   getWordMemory,
   getDueWords,
   upsertWordMemory,
@@ -104,7 +105,22 @@ export function formatWordCard(r: WordLookupResult): string {
 
 // 复习队列类型：单词 + 错题 合并
 export type ReviewItemType =
-  | { type: 'word'; id: string; word: string; meaning: string; level: number }
+  | {
+      type: 'word';
+      id: string;
+      word: string;
+      meaning: string;
+      level: number;
+      phonetic?: string | null;
+      prefix?: string | null;
+      prefix_meaning?: string | null;
+      root?: string | null;
+      root_meaning?: string | null;
+      suffix?: string | null;
+      suffix_meaning?: string | null;
+      etymology?: string | null;
+      example?: string | null;
+    }
   | { type: 'mistake'; id: string; question: string; answer: string | null; point: string | null };
 
 export function getTodayReview(): ReviewItemType[] {
@@ -115,6 +131,15 @@ export function getTodayReview(): ReviewItemType[] {
     word: w.word,
     meaning: w.meaning,
     level: w.level,
+    phonetic: w.phonetic,
+    prefix: w.prefix,
+    prefix_meaning: w.prefix_meaning,
+    root: w.root,
+    root_meaning: w.root_meaning,
+    suffix: w.suffix,
+    suffix_meaning: w.suffix_meaning,
+    etymology: w.etymology,
+    example: w.example,
   }));
   const mistakes: ReviewItemType[] = getDueMistakes(now).map(m => ({
     type: 'mistake',
@@ -140,6 +165,29 @@ export function recordReview(wordId: string, result: ReviewResult) {
     last_review_at: new Date().toISOString(),
     created_at: mem?.created_at || init.nextReviewAt.toISOString(),
   });
+
+  // 忘记 → 记入错题本（去重：已存在则 wrong_count 递增）
+  if (result === 'forget') {
+    const w = getWordById(wordId);
+    if (w) {
+      const existing = getMistakes().find(m => m.question === w.word);
+      if (existing) {
+        updateMistakeReview(existing.id, { wrong_count: (existing.wrong_count ?? 0) + 1 });
+      } else {
+        addMistake({
+          id: uuidv4(),
+          question: w.word,
+          answer: w.meaning,
+          user_answer: null,
+          knowledge_point: w.root ? `词根 ${w.root}` : '词汇',
+          wrong_count: 1,
+          next_review_at: null,
+          created_at: new Date().toISOString(),
+          user_id: null,
+        });
+      }
+    }
+  }
   return outcome;
 }
 

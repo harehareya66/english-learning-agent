@@ -23,7 +23,22 @@ export interface Message {
 
 // 复习项（艾宾浩斯自评）：单词或错题
 export type ReviewItem =
-  | { type: 'word'; id: string; word: string; meaning: string; level: number }
+  | {
+      type: 'word';
+      id: string;
+      word: string;
+      meaning: string;
+      level: number;
+      phonetic?: string | null;
+      prefix?: string | null;
+      prefix_meaning?: string | null;
+      root?: string | null;
+      root_meaning?: string | null;
+      suffix?: string | null;
+      suffix_meaning?: string | null;
+      etymology?: string | null;
+      example?: string | null;
+    }
   | { type: 'mistake'; id: string; question: string; answer: string | null; point: string | null };
 
 // 测评题目
