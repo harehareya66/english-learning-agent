@@ -23,6 +23,8 @@ import {
 } from 'tdesign-icons-react';
 import { Bot, Sparkles, Code, FileText, Globe, Lightbulb, BookOpen, MessageCircle, AlertCircle, BarChart3, GraduationCap, Languages, Briefcase } from 'lucide-react';
 import { CustomAgent } from '../types';
+import { getGoal } from '../utils/daily';
+import { GoalSettingDialog } from './GoalSettingDialog';
 
 interface SettingsPageProps {
   agents: CustomAgent[];
@@ -119,6 +121,8 @@ export function SettingsPage({
   const [baseUrlInput, setBaseUrlInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [goal, setGoalState] = useState(getGoal());
+  const [goalVisible, setGoalVisible] = useState(false);
 
   // 获取 AI 配置
   const fetchAiConfig = useCallback(async () => {
@@ -273,14 +277,8 @@ export function SettingsPage({
       <div className="max-w-3xl mx-auto space-y-8">
         {/* 页面标题 */}
         <div>
-          <h1 
-            className="text-2xl font-semibold mb-2"
-            style={{ color: 'var(--td-text-color-primary)' }}
-          >
-            设置
-          </h1>
           <p style={{ color: 'var(--td-text-color-secondary)' }}>
-            管理登录配置和英语学习 Agent
+            管理 API 配置、每日目标和英语学习 Agent
           </p>
         </div>
 
@@ -407,6 +405,26 @@ export function SettingsPage({
                 </Button>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* 每日目标 */}
+        <div>
+          <div className="mb-4">
+            <h2 className="text-lg font-medium" style={{ color: 'var(--td-text-color-primary)' }}>
+              每日背词目标
+            </h2>
+            <p className="text-sm mt-1" style={{ color: 'var(--td-text-color-secondary)' }}>
+              每天背多少个新词？打卡进度按此目标计算
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <span style={{ color: 'var(--td-text-color-primary)' }}>
+              当前目标：<strong>{goal} 词</strong>
+            </span>
+            <Button variant="outline" size="small" onClick={() => setGoalVisible(true)}>
+              修改目标
+            </Button>
           </div>
         </div>
 
@@ -676,6 +694,12 @@ export function SettingsPage({
             </div>
         </div>
       </div>
+
+      <GoalSettingDialog
+        visible={goalVisible}
+        onClose={() => setGoalVisible(false)}
+        onSaved={() => setGoalState(getGoal())}
+      />
     </div>
   );
 }

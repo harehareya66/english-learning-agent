@@ -228,6 +228,8 @@ app.get("/api/review/today", (req, res) => {
 // 背单词队列：到期复习词 + 新词
 app.get("/api/recite/queue", (req, res) => {
   const now = new Date().toISOString();
+  // 每日目标词数（前端传 goal，默认 20，上限 100）
+  const goal = Math.min(Math.max(parseInt(String(req.query.goal || '20'), 10) || 20, 1), 100);
   const due = db.getDueWords(now).map(w => ({
     id: w.word_id,
     word: w.word,
@@ -237,7 +239,8 @@ app.get("/api/recite/queue", (req, res) => {
   const learnedIds = new Set(db.getAllWordMemory().map(m => m.word_id));
   const newWords = db.getAllWords()
     .filter(w => !learnedIds.has(w.id))
-    .slice(0, 10)
+    .sort((a, b) => (b.frequency || 0) - (a.frequency || 0)) // 词频降序：高频简单词优先
+    .slice(0, goal)
     .map(w => ({
       id: w.id,
       word: w.word,
@@ -249,7 +252,7 @@ app.get("/api/recite/queue", (req, res) => {
       scene_tag: w.scene_tag,
       scene_example: w.scene_example,
     }));
-  res.json({ due, newWords });
+  res.json({ due, newWords, goal });
 });
 
 app.post("/api/review/record", (req, res) => {

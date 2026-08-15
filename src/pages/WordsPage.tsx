@@ -38,6 +38,7 @@ export function WordsPage() {
   const [filter, setFilter] = useState<'all' | 'unlearned' | 'learned'>('all');
   const [book, setBook] = useState<string>('all');
   const [books, setBooks] = useState<Array<{ id: string; name: string; count: number }>>([]);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   // 按学习状态筛选（未学/已学），并隐藏空词族
   const filteredGroups = useMemo(() => {
@@ -49,6 +50,36 @@ export function WordsPage() {
       }))
       .filter(g => g.words.length > 0);
   }, [groups, filter]);
+
+  // 「其他」组（无词根词）过大，按首字母细分为 A-Z 子组
+  const displayGroups = useMemo(() => {
+    const result: WordGroup[] = [];
+    for (const g of filteredGroups) {
+      if (g.root === '其他' && g.words.length > 0) {
+        const byLetter = new Map<string, DbWord[]>();
+        for (const w of g.words) {
+          const letter = (w.word[0] || '#').toUpperCase();
+          if (!byLetter.has(letter)) byLetter.set(letter, []);
+          byLetter.get(letter)!.push(w);
+        }
+        for (const letter of [...byLetter.keys()].sort()) {
+          result.push({ root: letter, rootMeaning: '', words: byLetter.get(letter)! });
+        }
+      } else {
+        result.push(g);
+      }
+    }
+    return result;
+  }, [filteredGroups]);
+
+  const toggleGroup = (root: string) => {
+    setExpandedGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(root)) next.delete(root);
+      else next.add(root);
+      return next;
+    });
+  };
 
   useEffect(() => {
     fetch('/api/books')
@@ -230,28 +261,62 @@ export function WordsPage() {
                 <Radio.Button value="learned">已学</Radio.Button>
               </Radio.Group>
               <span className="text-xs" style={{ color: 'var(--td-text-color-secondary)' }}>
-                {filteredGroups.reduce((n, g) => n + g.words.length, 0)} 词
+                {displayGroups.reduce((n, g) => n + g.words.length, 0)} 词
               </span>
             </div>
-            {filteredGroups.map(g => (
-              <div key={g.root}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="font-medium" style={{ color: 'var(--td-text-color-primary)' }}>
-                    {g.root}
-                  </span>
-                  <span className="text-xs" style={{ color: 'var(--td-text-color-secondary)' }}>
-                    {g.rootMeaning} · 词族 {g.words.length} 词
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {g.words.map(renderWord)}
-                </div>
-              </div>
-            ))}
-            {filteredGroups.length === 0 && (
+            {displayGroups.length === 0 ? (
               <div className="text-sm py-8 text-center" style={{ color: 'var(--td-text-color-placeholder)' }}>
                 没有符合条件的单词
               </div>
+            ) : (
+              <>
+                {(() => {
+                  const rootGroups = displayGroups.filter(g => !/^[A-Z]$/.test(g.root));
+                  const letterGroups = displayGroups.filter(g => /^[A-Z]$/.test(g.root));
+                  const renderGroup = (g: WordGroup) => {
+                    const isOpen = expandedGroups.has(g.root);
+                    const isLetterGroup = /^[A-Z]$/.test(g.root);
+                    return (
+                      <div key={g.root}>
+                        <div className="flex items-center gap-2 mb-2 cursor-pointer select-none" onClick={() => toggleGroup(g.root)}>
+                          <span className="text-xs" style={{ color: 'var(--td-text-color-placeholder)' }}>
+                            {isOpen ? '▾' : '▸'}
+                          </span>
+                          <span className="font-medium" style={{ color: 'var(--td-text-color-primary)' }}>
+                            {isLetterGroup ? `字母 ${g.root}` : g.root}
+                          </span>
+                          <span className="text-xs" style={{ color: 'var(--td-text-color-secondary)' }}>
+                            {isLetterGroup
+                              ? `${g.words.length} 词`
+                              : `${g.rootMeaning ? g.rootMeaning + ' · ' : ''}词族 ${g.words.length} 词`}
+                          </span>
+                        </div>
+                        {isOpen && <div className="space-y-2">{g.words.map(renderWord)}</div>}
+                      </div>
+                    );
+                  };
+                  return (
+                    <>
+                      {rootGroups.length > 0 && (
+                        <div>
+                          <div className="text-xs font-medium mb-2 mt-1" style={{ color: 'var(--td-text-color-secondary)' }}>
+                            词根词族 · 词根记忆法
+                          </div>
+                          {rootGroups.map(renderGroup)}
+                        </div>
+                      )}
+                      {letterGroups.length > 0 && (
+                        <div>
+                          <div className="text-xs font-medium mb-2 mt-4" style={{ color: 'var(--td-text-color-secondary)' }}>
+                            基础词 · 按字母
+                          </div>
+                          {letterGroups.map(renderGroup)}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+              </>
             )}
           </div>
         )}

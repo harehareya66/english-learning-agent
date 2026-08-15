@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Loading, Progress, Button, DialogPlugin, MessagePlugin } from 'tdesign-react';
 import { BookOpen, RotateCw, BarChart3, MessageCircle, Target } from 'lucide-react';
 import { getDailyStats } from '../utils/daily';
+import { GoalSettingDialog } from '../components/GoalSettingDialog';
 
 interface Stats {
   totalWords: number;
@@ -29,6 +30,7 @@ const QUICK_ACTIONS = [
 export function HomePage({ onNavigate }: HomePageProps) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [daily, setDaily] = useState(getDailyStats);
+  const [goalVisible, setGoalVisible] = useState(false);
 
   useEffect(() => {
     fetch('/api/stats')
@@ -50,8 +52,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
   const fresh = stats.levelDist[0] || 0;
   // 学习进度 = 已脱离「刚学 L0」的单词占比（比纯掌握度更友好）
   const progress = stats.learnedCount > 0 ? Math.round(((stats.learnedCount - fresh) / stats.learnedCount) * 100) : 0;
-  // 背单词队列内容 = 到期词 + 新词
-  const reciteCount = stats.dueWords + (stats.newWordsCount || 0);
+  // 背单词队列内容 = 到期词 + 新词（新词数对齐每日目标）
+  const reciteCount = stats.dueWords + Math.min(stats.newWordsCount || 0, daily.goal);
   const hasRecite = reciteCount > 0;
 
   const handleReset = () => {
@@ -120,7 +122,12 @@ export function HomePage({ onNavigate }: HomePageProps) {
               : `去复习巩固（今日待巩固 ${stats.dueMistakes} 道错题）`}
           </Button>
           <div className="text-center text-xs mt-2" style={{ color: 'var(--td-text-color-placeholder)' }}>
-            🔥 连续打卡 {daily.streak} 天
+            🔥 连续打卡 {daily.streak} 天 · <button
+              onClick={() => setGoalVisible(true)}
+              style={{ color: 'var(--td-brand-color)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12 }}
+            >
+              设置目标
+            </button>
           </div>
         </div>
 
@@ -134,7 +141,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               学习进度
             </span>
             <span className="text-xs" style={{ color: 'var(--td-text-color-secondary)' }}>
-              学习中 {learning} · 已掌握 {mastered} / 已学 {stats.learnedCount}
+              刚学 {fresh} · 学习中 {learning} · 已掌握 {mastered} / 已学 {stats.learnedCount}
             </span>
           </div>
           <Progress percentage={progress} theme={progress >= 60 ? 'success' : 'warning'} />
@@ -183,6 +190,12 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </div>
         </div>
       </div>
+
+      <GoalSettingDialog
+        visible={goalVisible}
+        onClose={() => setGoalVisible(false)}
+        onSaved={() => setDaily(getDailyStats())}
+      />
     </div>
   );
 }

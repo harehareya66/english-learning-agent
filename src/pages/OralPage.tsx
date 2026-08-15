@@ -170,9 +170,6 @@ export function OralPage() {
                 <div className="font-medium" style={{ color: 'var(--td-text-color-primary)' }}>
                   {s.title}
                 </div>
-                <div className="text-xs mt-1" style={{ color: 'var(--td-text-color-secondary)' }}>
-                  {s.tag}
-                </div>
               </div>
             ))}
           </div>
